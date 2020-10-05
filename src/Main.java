@@ -19,9 +19,12 @@ class Camera
     double FocalLength;
     //target, make sure this is a plane by using Double.Positive_Infinity;
     public void Translate(Vector3 vector3){
-        getPosition().X += vector3.X;
-        getPosition().Y += vector3.Y;
-        getPosition().Z += vector3.Z;
+       setPosition(getPosition().add(vector3));
+    }
+    public void Translate(double x,double y, double z){
+        getPosition().X += x;
+        getPosition().Y += y;
+        getPosition().Z += z;
     }
 }
 class Vector3{
@@ -77,22 +80,7 @@ class Mesh
             getVertices()[i] = getVertices()[i].add(vector3);
         }
     }
-    public static Vector3 rotateVectorCC(Vector3 vec, Vector3 axis, double theta){
-        double x, y, z;
-        double u, v, w;
-        x=vec.X;y=vec.Y;z=vec.Z;
-        u=axis.X;v=axis.Y;w=axis.Z;
-        double xPrime = u*(u*x + v*y + w*z)*(1d - Math.cos(theta)) + x*Math.cos(theta) + (-w*y + v*z)*Math.sin(theta);
-        double yPrime = v*(u*x + v*y + w*z)*(1d - Math.cos(theta)) + y*Math.cos(theta) + (w*x - u*z)*Math.sin(theta);
-        double zPrime = w*(u*x + v*y + w*z)*(1d - Math.cos(theta)) + z*Math.cos(theta) + (-v*x + u*y)*Math.sin(theta);
-        return new Vector3(xPrime, yPrime, zPrime);
-    }
-    public void Rotate(Vector3 origin, double theta){
-        for(int i =0;i < Vertices.length;i++){
-            Vertices[i] = rotateVectorCC(Vertices[i],origin,theta);
-        }
-
-    }
+    //Rotation Equations
     //Z axis
     //      |cos θ   −sin θ   0| |x|   |x cos θ − y sin θ|   |x'|
     //      |sin θ    cos θ   0| |y| = |x sin θ + y cos θ| = |y'|
