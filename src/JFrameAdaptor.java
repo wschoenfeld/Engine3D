@@ -19,9 +19,6 @@ public class JFrameAdaptor{
 
 
     }
-    public void Start(){
-
-    }
     void drawMeshPoints(Graphics g,Mesh mesh,Camera camera){
         for(int i = 0;i < mesh.getVertices().length;i++){
             Vector3 meshpos = mesh.getVertices()[i];
