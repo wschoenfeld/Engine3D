@@ -92,7 +92,12 @@ public class JFrameGraphics extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-
+        if(e.getKeyCode() == KeyEvent.VK_Z){
+            camera.FocalLength += 5;
+        }
+        if(e.getKeyCode() == KeyEvent.VK_X){
+            camera.FocalLength -= 5;
+        }
         if(e.getKeyCode() == KeyEvent.VK_T){
             mesh.Translate(new Vector3(5,0,0));
             //System.out.println("ROTATED");
