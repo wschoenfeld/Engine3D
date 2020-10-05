@@ -12,7 +12,7 @@ public class JFrameGraphics extends JPanel implements KeyListener {
     public JFrame frame;
     public JFrameAdaptor adaptor;
     public Mesh mesh = newCube(100,new Vector3(0,0,10));
-    public Mesh plane = newPlane(100,100,new Vector3(0,-100,0));
+    public Mesh plane = newPlane(1000,1000,new Vector3(0,-100,0));
     public static Vector3 Origin = new Vector3(0,0,0);
     Camera camera = new Camera();
     public void paint(Graphics g){
@@ -42,26 +42,12 @@ public class JFrameGraphics extends JPanel implements KeyListener {
         int a = 0;
         Runnable helloRunnable = new Runnable() {
             public void run() {
-                if(camera.FocalLength > 50.0){
-                    d[0] = true;
-                }
-                if(camera.FocalLength < 0.0){
-                    d[0] = false;
-                }
-                if(!d[0]){
-                    //mesh.Translate(new Vector3(10,0,0));
-                    camera.FocalLength++;
-                }
-                if(d[0]){
-                    //mesh.Translate(new Vector3(-10,0,0));
-                    camera.FocalLength--;
-                }
                 frame.revalidate();
                 frame.repaint();
             }
         };
-        //ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        //executor.scheduleAtFixedRate(helloRunnable, 0, 100, TimeUnit.MILLISECONDS);
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(helloRunnable, 0, 60, TimeUnit.MILLISECONDS);
     }
     public JFrameGraphics(int width,int hight,JFrameAdaptor adaptor){
         this.width = width;
@@ -153,8 +139,6 @@ public class JFrameGraphics extends JPanel implements KeyListener {
             mesh.Translate(new Vector3(0,0,-5));
             //System.out.println("ROTATED");
         }
-        frame.revalidate();
-        frame.repaint();
     }
 
     @Override

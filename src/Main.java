@@ -12,20 +12,12 @@ public class Main {
 }
 class Camera
 {
-    public double FOVangle;
-    public double getFOV(){
-        return 1.0 / Math.tan(FOVangle/2.0);
-    }
-
     //position
     public Vector3 Position;
     public Vector3 getPosition(){return Position;}
     public void setPosition(Vector3 position) {Position = position;}
     double FocalLength;
     //target, make sure this is a plane by using Double.Positive_Infinity;
-    public Vector3 Target;
-    public Vector3 getTarget() {return Target;}
-    public void setTarget(Vector3 target) {Target = target;}
     public void Translate(Vector3 vector3){
         getPosition().X += vector3.X;
         getPosition().Y += vector3.Y;
@@ -148,7 +140,4 @@ class point{
                 ", y=" + y +
                 '}';
     }
-}
-class Quaternions{
-    double x,y,z,w;
 }

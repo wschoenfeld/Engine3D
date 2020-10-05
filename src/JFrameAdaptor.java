@@ -43,9 +43,6 @@ public class JFrameAdaptor{
             //System.out.println(pointOnScreen.toString());
         }
     }
-    public void paint(Graphics g){
-        this.g = g;
-    }
     public point EDto2D(Vector3 mesh,Camera camera){
         Vector3 camerapos = camera.Position;
         Vector3 meshpos = mesh;
