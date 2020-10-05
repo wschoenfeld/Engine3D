@@ -11,9 +11,7 @@ public class JFrameGraphics extends JPanel implements KeyListener {
     public Graphics graphics;
     public JFrame frame;
     public JFrameAdaptor adaptor;
-    public Mesh mesh = newCube(10,new Vector3(0,0,10));
-    public Mesh pyramid = newPyramid(10,10,new Vector3(-50,0,5));
-    public Mesh plane = newPlane(1000,1000,new Vector3(-500,0,0));
+    public Mesh mesh = newCube(50,new Vector3(300,300,0));
     public static Vector3 Origin = new Vector3(0,0,0);
     Camera camera = new Camera();
     public void paint(Graphics g){
@@ -21,27 +19,35 @@ public class JFrameGraphics extends JPanel implements KeyListener {
         g.drawString("Box Pos: "+mesh.getVertices()[0].toString(),5,20);
         g.drawString("Camera Pos: "+camera.Position.toString(),5,40);
         g.drawString("Focal Length: " + camera.FocalLength,5,60);
+        g.drawString("Box Rot: "+ mesh.getRotation().toString(),5,80);
         graphics = g;
         //adaptor.worldOrigin = plane.getPosition();
+
         adaptor.drawMeshPoints(g,mesh, camera);
-        adaptor.drawMeshPoints(g,plane, camera);
-        adaptor.drawMeshPoints(g,pyramid, camera);
         for(int i = 0; i < mesh.faces.length; i++){
-            //adaptor.drawFace(mesh.faces[i],g,mesh.faces[i].color,camera);
+            int xs[] = new int[4];
+            int ys[] = new int[4];
+            for(int j = 0; j < mesh.faces[i].edges.length; j++){
+                xs[j] = (int)adaptor.EDto2D(mesh.faces[i].edges[j],camera).x;
+                ys[j] = (int)adaptor.EDto2D(mesh.faces[i].edges[j],camera).y;
+            }
+            g.setColor(mesh.faces[i].color);
+            g.fillPolygon(xs,ys,4);
         }
     }
 
 
     public void setUpJFrame(){
-        camera.setPosition(new Vector3(0,20,0));
+        camera.setPosition(new Vector3(0,-20,0));
         camera.FocalLength = new Vector3(0,20,70);
+        camera.FOV = 60;
         JFrame frame= new JFrame("");
         this.frame = frame;
         frame.getContentPane().add(this);
         frame.setSize(width, hight);
         frame.setVisible(true);
         frame.addKeyListener(this);
-
+        mesh.setRotation(new Vector3(0,0,0));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(false);
         final boolean[] d = {false};
@@ -51,6 +57,8 @@ public class JFrameGraphics extends JPanel implements KeyListener {
                 camera.FocalLenthUpdate();
                 frame.revalidate();
                 frame.repaint();
+
+
             }
         };
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
@@ -78,14 +86,14 @@ public class JFrameGraphics extends JPanel implements KeyListener {
         Mesh mesh = new Mesh("Cube",8);
         mesh.setPosition(pos);
         mesh.setVertices(new Vector3[]{
-                new Vector3(pos.X,pos.Y,pos.Z),
-                new Vector3(pos.X + size,pos.Y,pos.Z),
-                new Vector3(pos.X,pos.Y + size,pos.Z),
-                new Vector3(pos.X,pos.Y,pos.Z + size),
-                new Vector3(pos.X+size,pos.Y+size,pos.Z),
-                new Vector3(pos.X + size,pos.Y,pos.Z+size),
-                new Vector3(pos.X,pos.Y+size,pos.Z+size),
-                new Vector3(pos.X + size,pos.Y+size,pos.Z+size),
+                new Vector3(0,0,0),
+                new Vector3(size,0,0),
+                new Vector3(0,size,0),
+                new Vector3(0,0,size),
+                new Vector3(size,size,0),
+                new Vector3(0,size,size),
+                new Vector3(size,0,size),
+                new Vector3(size,size,size),
         });
         mesh.faces = new Face[]{
                 new Face(new Vector3[]{
@@ -131,11 +139,26 @@ public class JFrameGraphics extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyCode() == KeyEvent.VK_W){
+        if(e.getKeyCode() == KeyEvent.VK_B){
+            mesh.getRotation().Y += 5;
+        }
+        if(e.getKeyCode() == KeyEvent.VK_N){
+            mesh.getRotation().Z += 5;
+        }
+        if(e.getKeyCode() == KeyEvent.VK_V){
+            mesh.getRotation().X += 5;
+        }
+        if(e.getKeyCode() == KeyEvent.VK_A){
             camera.getPosition().X += 5;
         }
-        if(e.getKeyCode() == KeyEvent.VK_E){
+        if(e.getKeyCode() == KeyEvent.VK_D){
             camera.getPosition().X -= 5;
+        }
+        if(e.getKeyCode() == KeyEvent.VK_W){
+            camera.getPosition().Y += 5;
+        }
+        if(e.getKeyCode() == KeyEvent.VK_S){
+            camera.getPosition().Y -= 5;
         }
         if(e.getKeyCode() == KeyEvent.VK_Z){
             camera.FocalLength.Z += 5;
@@ -144,27 +167,27 @@ public class JFrameGraphics extends JPanel implements KeyListener {
             camera.FocalLength.Z -= 5;
         }
         if(e.getKeyCode() == KeyEvent.VK_T){
-            mesh.Translate(new Vector3(1,0,0));
+            mesh.Translate(new Vector3(5,0,0));
             //System.out.println("ROTATED");
         }
         if(e.getKeyCode() == KeyEvent.VK_G){
-            mesh.Translate(new Vector3(-1,0,0));
+            mesh.Translate(new Vector3(-5,0,0));
             //System.out.println("ROTATED");
         }
         if(e.getKeyCode() == KeyEvent.VK_Y){
-            mesh.Translate(new Vector3(0,1,0));
+            mesh.Translate(new Vector3(0,5,0));
             //System.out.println("ROTATED");
         }
         if(e.getKeyCode() == KeyEvent.VK_H){
-            mesh.Translate(new Vector3(0,-1,0));
+            mesh.Translate(new Vector3(0,-5,0));
             //System.out.println("ROTATED");
         }
         if(e.getKeyCode() == KeyEvent.VK_U){
-            mesh.Translate(new Vector3(0,0,1));
+            mesh.Translate(new Vector3(0,0,5));
             //System.out.println("ROTATED");
         }
         if(e.getKeyCode() == KeyEvent.VK_J){
-            mesh.Translate(new Vector3(0,0,-1));
+            mesh.Translate(new Vector3(0,0,-5));
             //System.out.println("ROTATED");
         }
     }

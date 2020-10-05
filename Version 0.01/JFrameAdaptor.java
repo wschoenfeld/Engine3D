@@ -19,26 +19,21 @@ public class JFrameAdaptor{
 
 
     }
-    public void drawFace(Face face,Graphics g,Color color,Camera camera){
-        int xs[] = new int[4];
-        int ys[] = new int[4];
-        for(int i = 0; i < face.edges.length; i++){
-            xs[i] = (int)EDto2D(face.edges[i],camera).x;
-            ys[i] = (int)EDto2D(face.edges[i],camera).y;
-        }
-        g.setColor(color);
-        g.fillPolygon(xs,ys,4);
-    }
+
     void drawMeshPoints(Graphics g,Mesh mesh,Camera camera){
         for(int i = 0;i < mesh.getVertices().length;i++){
-            Vector3 meshpos = mesh.getVertices()[i];
+
+            Vector3 meshpos = mesh.returnPosition(mesh.getVertices()[i]);
             //column = X*focal/Z + width/2
             //row = -Y*focal/Z  + height/2
             point pointOnScreen = EDto2D(meshpos,camera);
+            pointOnScreen.add(new point(width,height));
             System.out.println(meshpos.toString());
             g.fillRect((int)pointOnScreen.x,(int)pointOnScreen.y,2,2);
             for(int j = 0; j < mesh.getVertices().length;j++){
-                point pointOnScreen2 = EDto2D(mesh.getVertices()[j],camera);
+
+                point pointOnScreen2 = EDto2D(mesh.returnPosition(mesh.getVertices()[j]),camera);
+                pointOnScreen2.add(new point(width,height));
                 Vector3 meshpos2 = mesh.getVertices()[j];
                 if(meshpos2.Z > camera.Position.Z && meshpos.Z > camera.Position.Z){
                     g.drawLine((int)pointOnScreen.x,(int)pointOnScreen.y,(int)pointOnScreen2.x,(int)pointOnScreen2.y);
@@ -61,13 +56,34 @@ public class JFrameAdaptor{
         double z2 =  (meshpos.Z - camerapos.Z) * (meshpos.Z - camerapos.Z);
         double distance = Math.sqrt(x2 + y2 + z2);
         //System.out.println(distance);
+        //Here's a very general answer. Say the camera's at (Xc, Yc, Zc) and the point you want to project is P = (X, Y, Z). The distance from the camera to the 2D plane onto which you are projecting is F (so the equation of the plane is Z-Zc=F). The 2D coordinates of P projected onto the plane are (X', Y').
+        //
+        //Then, very simply:
+        //
+        //X' = ((X - Xc) * (F/Z)) + Xc
+        //
+        //Y' = ((Y - Yc) * (F/Z)) + Yc
+        double hw = width / 2;
+        double hh = height / 2;
+        double fl_top = hw / Math.tan(Math.toRadians(camera.FOV)/2);
+        double fl_side = hh / Math.tan(Math.toRadians(camera.FOV)/2);
+
+        double f = meshpos.Z - camerapos.Z;
         point a = new point(
-                (-mesh.X * camera.FocalLength.Z)/(mesh.Z) + (width / 2),
-                (-mesh.Y * camera.FocalLength.Z)/(mesh.Z) + (height / 2));
+                ((mesh.X + camera.FocalLength.X) * camera.FocalLength.Z)/(mesh.Z) + ((width) / 2),
+                ((-mesh.Y - camera.FocalLength.Y) * camera.FocalLength.Z)/(mesh.Z) + ((height) / 2));
         point b = new point(
                 (mesh.X * distance)/(distance + mesh.Z),
                 (mesh.Y* distance)/(distance + mesh.Z));
-        return a;
+        point c = new point(
+                (mesh.X - camera.FocalLength.X) * (distance / mesh.Z) + camera.FocalLength.X,
+                (mesh.Y - camera.FocalLength.Y) * (distance / mesh.Z) + camera.FocalLength.Y);
+        point d = new point(
+                ((meshpos.X * fl_top) / (meshpos.Z + fl_top)),
+                ((meshpos.Y * fl_top) / (meshpos.Z + fl_top)));
+
+
+        return d;
     }
 
 }
