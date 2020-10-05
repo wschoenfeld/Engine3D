@@ -16,7 +16,11 @@ class Camera
     public Vector3 Position;
     public Vector3 getPosition(){return Position;}
     public void setPosition(Vector3 position) {Position = position;}
-    double FocalLength;
+    Vector3 FocalLength = new Vector3(0,50,0);
+    public void FocalLenthUpdate(){
+        FocalLength.X = getPosition().X;
+        FocalLength.Y = getPosition().Y;
+    }
     //target, make sure this is a plane by using Double.Positive_Infinity;
     public void Translate(Vector3 vector3){
        setPosition(getPosition().add(vector3));
@@ -61,6 +65,7 @@ class Mesh
     public String getName() {return Name;}
     public void setName(String name) {Name = name;}
 
+    public Face[] faces;
     private Vector3[] Vertices;
     public Vector3[] getVertices(){return Vertices;}
     public void setVertices(Vector3[] vertices){Vertices = vertices;}
@@ -80,6 +85,7 @@ class Mesh
             getVertices()[i] = getVertices()[i].add(vector3);
         }
     }
+
     //Rotation Equations
     //Z axis
     //      |cos θ   −sin θ   0| |x|   |x cos θ − y sin θ|   |x'|
@@ -127,5 +133,14 @@ class point{
                 "x=" + x +
                 ", y=" + y +
                 '}';
+    }
+}
+class Face{
+    public Vector3[] edges = new Vector3[4];
+    Color color;
+
+    public Face(Vector3[] edges, Color color){
+        this.edges = edges;
+        this.color = color;
     }
 }

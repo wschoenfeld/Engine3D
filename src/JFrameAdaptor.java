@@ -19,6 +19,16 @@ public class JFrameAdaptor{
 
 
     }
+    public void drawFace(Face face,Graphics g,Color color,Camera camera){
+        int xs[] = new int[4];
+        int ys[] = new int[4];
+        for(int i = 0; i < face.edges.length; i++){
+            xs[i] = (int)EDto2D(face.edges[i],camera).x;
+            ys[i] = (int)EDto2D(face.edges[i],camera).y;
+        }
+        g.setColor(color);
+        g.fillPolygon(xs,ys,4);
+    }
     void drawMeshPoints(Graphics g,Mesh mesh,Camera camera){
         for(int i = 0;i < mesh.getVertices().length;i++){
             Vector3 meshpos = mesh.getVertices()[i];
@@ -30,13 +40,14 @@ public class JFrameAdaptor{
             for(int j = 0; j < mesh.getVertices().length;j++){
                 point pointOnScreen2 = EDto2D(mesh.getVertices()[j],camera);
                 Vector3 meshpos2 = mesh.getVertices()[j];
-                if(meshpos.X == meshpos2.X ||meshpos.Y == meshpos2.Y || meshpos.Z == meshpos2.Z){
-                    if(meshpos2.Z > camera.Position.Z && meshpos.Z > camera.Position.Z){
-                        g.drawLine((int)pointOnScreen.x,(int)pointOnScreen.y,(int)pointOnScreen2.x,(int)pointOnScreen2.y);
-                    }
+                if(meshpos2.Z > camera.Position.Z && meshpos.Z > camera.Position.Z){
+                    g.drawLine((int)pointOnScreen.x,(int)pointOnScreen.y,(int)pointOnScreen2.x,(int)pointOnScreen2.y);
                 }
+                if(meshpos.X == meshpos2.X ||meshpos.Y == meshpos2.Y || meshpos.Z == meshpos2.Z){
 
+                }
             }
+
             //System.out.println(pointOnScreen.toString());
         }
     }
@@ -51,8 +62,8 @@ public class JFrameAdaptor{
         double distance = Math.sqrt(x2 + y2 + z2);
         //System.out.println(distance);
         point a = new point(
-                (mesh.X * camera.FocalLength)/(mesh.Z) + (width / 2),
-                (-mesh.Y * camera.FocalLength)/(mesh.Z) + (height / 2));
+                (-mesh.X * camera.FocalLength.Z)/(mesh.Z) + (width / 2),
+                (-mesh.Y * camera.FocalLength.Z)/(mesh.Z) + (height / 2));
         point b = new point(
                 (mesh.X * distance)/(distance + mesh.Z),
                 (mesh.Y* distance)/(distance + mesh.Z));
