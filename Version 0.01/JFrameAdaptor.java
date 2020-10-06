@@ -55,14 +55,7 @@ public class JFrameAdaptor{
         double y2 =  (meshpos.Y - camerapos.Y) * (meshpos.Y - camerapos.Y);
         double z2 =  (meshpos.Z - camerapos.Z) * (meshpos.Z - camerapos.Z);
         double distance = Math.sqrt(x2 + y2 + z2);
-        //System.out.println(distance);
-        //Here's a very general answer. Say the camera's at (Xc, Yc, Zc) and the point you want to project is P = (X, Y, Z). The distance from the camera to the 2D plane onto which you are projecting is F (so the equation of the plane is Z-Zc=F). The 2D coordinates of P projected onto the plane are (X', Y').
-        //
-        //Then, very simply:
-        //
-        //X' = ((X - Xc) * (F/Z)) + Xc
-        //
-        //Y' = ((Y - Yc) * (F/Z)) + Yc
+
         double hw = width / 2;
         double hh = height / 2;
         double fl_top = hw / Math.tan(Math.toRadians(camera.FOV)/2);
