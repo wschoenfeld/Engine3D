@@ -2,13 +2,13 @@ import javax.swing.*;
 
 public class Math3D {
     public static Vector2 ScreenConverter(Vector3 mesh, JFrame frame,Camera camera){
-        double hw = frame.getWidth() / 2;
-        double hh = frame.getHeight() / 2;
+        double hw = (frame.getWidth()) / 2;
+        double hh = (frame.getHeight()) / 2;
         double fl_top = hw / Math.tan(Math.toRadians(camera.fieldOfVeiw)/2);
         double fl_side = hh / Math.tan(Math.toRadians(camera.fieldOfVeiw)/2);
         Vector2 d = new Vector2(
-                (mesh.x * fl_top) / (mesh.z + fl_top),
-                (mesh.y * fl_top) / (mesh.z + fl_top)
+                (((mesh.x + camera.transform.Position.x) * fl_top) / ((mesh.z + camera.transform.Position.z) + fl_top)) + hw,
+                (((mesh.y + camera.transform.Position.y) * fl_side) / ((mesh.z + camera.transform.Position.z) + fl_side)) + hh
         );
 
 
@@ -26,21 +26,57 @@ public class Math3D {
         y = y + rotateAround.y;
         return new Vector2(x,y);
     }
-    public static Vector2 rotate3DX(Vector3 pointToRotate,Vector3 rotateAround,double angle){
+    public static Vector3 rotate3DZ(Vector3 pointToRotate,Vector3 rotateAround,double angle){
         double cos = Math.cos(Math.toRadians(angle));
         double sin = Math.sin(Math.toRadians(angle));
         double x = (pointToRotate.x - rotateAround.x);
         double y = (pointToRotate.y - rotateAround.y);
-        System.out.println("{X: " + x + " Y: " + y + "}");
         double x1 = x;
         x = (x * cos) - (y * sin);
         y = (x1 * sin) + (y * cos);
-        System.out.println("{X2: " + x + " Y2: " + y + "}");
         x = x + rotateAround.x;
         y = y + rotateAround.y;
-        System.out.println("{X3: " + x + " Y3: " + y + "}");
-        return new Vector2(x,y);
+        return new Vector3(x,y, pointToRotate.z);
     }
+    public static Vector3 rotate3DY(Vector3 pointToRotate,Vector3 rotateAround,double angle){
+        double cos = Math.cos(Math.toRadians(angle));
+        double sin = Math.sin(Math.toRadians(angle));
+        double x = (pointToRotate.x - rotateAround.x);
+        double z = (pointToRotate.z - rotateAround.z);
+        double x1 = x;
+        x = (x * cos) + (z * sin);
+        z = (-x1 * sin) + (z * cos);
+        x = x + rotateAround.x;
+        z = z + rotateAround.z;
+        return new Vector3(x, pointToRotate.y, z);
+    }
+    public static Vector3 rotate3DX(Vector3 pointToRotate,Vector3 rotateAround,double angle){
+        double cos = Math.cos(Math.toRadians(angle));
+        double sin = Math.sin(Math.toRadians(angle));
+        double y = (pointToRotate.y - rotateAround.y);
+        double z = (pointToRotate.z - rotateAround.z);
+        double y1 = y;
+        y = (y * cos) - (z * sin);
+        z = (y1 * sin) + (z * cos);
+        y = y + rotateAround.y;
+        z = z + rotateAround.z;
+        return new Vector3(z,y, z);
+    }
+    //Rotation Equations
+    //Z axis
+    //      |cos θ   −sin θ   0| |x|   |x cos θ − y sin θ|   |x'|
+    //      |sin θ    cos θ   0| |y| = |x sin θ + y cos θ| = |y'|
+    //      |  0       0      1| |z|   |        z        |   |z'|
+
+    //Y axis
+    //      | cos θ    0   sin θ| |x|   | x cos θ + z sin θ|   |x'|
+    //      |   0      1       0| |y| = |         y        | = |y'|
+    //      |−sin θ    0   cos θ| |z|   |−x sin θ + z cos θ|   |z'|
+
+    //X axis
+    //      |1     0           0| |x|   |        x        |   |x'|
+    //      |0   cos θ    −sin θ| |y| = |y cos θ − z sin θ| = |y'|
+    //      |0   sin θ     cos θ| |z|   |y sin θ + z cos θ|   |z'|
 
 }
 class Vector4{
@@ -120,6 +156,15 @@ class Vector3{
         y = y * amount;
         z = z * amount;
     }
+
+    @Override
+    public String toString() {
+        return "Vector3{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
+    }
 }
 class Vector2{
     double x,y;
@@ -148,5 +193,13 @@ class Vector2{
     public void scale(double amount){
         x = x * amount;
         y = y * amount;
+    }
+
+    @Override
+    public String toString() {
+        return "Vector2{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
     }
 }
